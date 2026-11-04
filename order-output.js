@@ -102,8 +102,9 @@ function draw(model,options={}){
   font(ctx,10);ctx.fillStyle='#24382d';layout.header.general.forEach((line,i)=>ctx.fillText(line,M+43,153+i*15));
   x=M;const names=['No.','제품','색상','사이즈','수량','비고','라벨'];
   COLS.forEach((w,i)=>{rect(ctx,x,layout.header.tableY,w,30,'#f0f4ef');center(ctx,names[i],x,layout.header.tableY,w,30,12);x+=w;});
-  let y=layout.start;
-  chunks.forEach(chunk=>{
+  let y=layout.start;const groupSeparators=[];
+  chunks.forEach((chunk,chunkIndex)=>{
+   if(chunkIndex>0)groupSeparators.push(y);
    const total=chunk.heights.reduce((a,b)=>a+b,0);
    rect(ctx,M,y,COLS[0],total);center(ctx,chunk.number,M,y,COLS[0],total,11,true);
    rect(ctx,W-M-COLS[6],y,COLS[6],total);center(ctx,chunk.label,W-M-COLS[6],y,COLS[6],total);
@@ -117,6 +118,8 @@ function draw(model,options={}){
   });
   // Empty guide rows are visual space only and never receive document numbers.
   if(layout.pages.length===1)while(y+37<=Math.min(BOTTOM,layout.start+333)){let cx=M;COLS.forEach(w=>{rect(ctx,cx,y,w,37);cx+=w;});y+=37;}
+  // Draw group boundaries last so merged No./label cells and thin cell borders cannot cover them.
+  ctx.fillStyle='#65786b';groupSeparators.forEach(boundary=>ctx.fillRect(M,boundary-1,W-2*M,2));
   font(ctx,9);ctx.fillStyle='#6b7c70';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText((pageIndex+1)+' / '+layout.pages.length,W-M,1084);
   canvas.setAttribute('role','img');canvas.setAttribute('aria-label',model.type+' '+(pageIndex+1)+'페이지. 현장 '+(model.site||'미입력')+'. 제품 '+model.groups.reduce((n,g)=>n+g.rows.length,0)+'개.');
   return canvas;
