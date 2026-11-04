@@ -122,7 +122,7 @@ function draw(model,options={}){
   return canvas;
  });
 }
-function filename(model){return [model.type,model.site||'현장미입력',model.date].join('_').replace(/[<>:"/\\|?*\x00-\x1f]/g,'_');}
+function filename(model){return [String(model.date||'').replace(/-/g,''),String(model.recipient||'').trim()||'수신처미입력',String(model.site||'').trim()||'현장미입력'].join('_').replace(/[<>:"/\\|?*\x00-\x1f]/g,'_');}
 function download(blob,name){const url=URL.createObjectURL(blob);const a=document.createElement('a');a.href=url;a.download=name;document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(url),60000);}
 function jpeg(canvas){return new Promise((resolve,reject)=>canvas.toBlob(blob=>blob?resolve(blob):reject(new Error('JPG 생성에 실패했습니다.')),'image/jpeg',.96));}
 // Store-only ZIP: multiple JPG pages are downloaded in one user action.
