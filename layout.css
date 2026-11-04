@@ -1,0 +1,114 @@
+/* Desktop: the preview and both input areas stay inside the viewport. */
+#dw-composer{max-width:none;min-height:100dvh}
+#dw-composer .dw-header{padding:10px 22px;min-height:54px;gap:10px}
+#dw-composer .dw-logo{width:32px;height:32px;font-size:19px}
+#dw-composer .dw-name{font-size:16px}
+#dw-composer .dw-name small{font-size:9px}
+#dw-composer .dw-main{padding:12px 18px}
+#dw-composer .dw-titlebar{margin-bottom:12px;gap:8px}
+#dw-composer h1{font-size:21px;margin-bottom:2px}
+#dw-composer .dw-titlebar>button{padding:7px 11px;font-size:12px}
+#dw-composer .dw-layout{gap:12px;grid-template-columns:minmax(0,1.65fr) minmax(310px,1fr)}
+#dw-composer .dw-preview-column{max-width:none;min-width:0;display:flex;flex-direction:column;gap:8px}
+#dw-composer .dw-preview-column>.dw-preview-head{margin:0;min-height:30px;flex-wrap:wrap;gap:8px}
+#dw-composer .dw-preview-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+#dw-composer .dw-preview-tools select,#dw-composer .dw-preview-tools button{font:inherit;font-size:11px;padding:6px 8px;border:1px solid var(--dw-line);border-radius:6px;background:var(--dw-panel);color:var(--dw-ink)}
+#dw-composer .dw-paper{display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:0;padding:8px!important;background:var(--dw-soft);border:1px solid var(--dw-line);border-radius:8px;gap:12px;overflow:auto;overscroll-behavior:contain}
+#dw-composer .dw-paper>svg{display:block;flex-shrink:0;width:100%;height:auto;max-width:none;overflow:hidden;background:#fff;border:1px solid #ced8d0;box-shadow:0 2px 8px #162c2010}
+#dw-composer .dw-preview-column>.dw-output{margin:0;padding:9px 11px}
+#dw-composer .dw-output h2{display:none}
+#dw-composer .dw-output-buttons{gap:7px}
+#dw-composer .dw-output-buttons button{padding:8px;font-size:12px}
+#dw-composer .dw-output p{font-size:10px;margin-top:5px;line-height:1.45}
+#dw-composer .dw-status{font-size:11px;margin-top:5px}
+#dw-composer .dw-basic-column{position:static;padding:12px;min-width:0}
+#dw-composer .dw-basic-column>.dw-section-head{margin-bottom:8px;gap:6px;flex-wrap:wrap}
+#dw-composer .dw-sender-inline{font-size:11px;color:var(--dw-sub)}
+#dw-composer .dw-basic-column .dw-segments{padding:3px;margin-bottom:9px}
+#dw-composer .dw-basic-column .dw-segments button{padding:6px 8px;font-size:12px}
+#dw-composer .dw-basic-column .dw-fields{gap:7px 10px;grid-template-columns:minmax(0,1fr) minmax(0,1fr)}
+#dw-composer .dw-basic-column label{font-size:11px;line-height:1.3}
+#dw-composer .dw-basic-column input{padding:6px 8px;font-size:13px;line-height:1.35;margin-top:4px}
+#dw-composer .dw-product-panel{padding:12px;min-height:0;display:grid;grid-template-columns:minmax(0,1fr);grid-template-rows:auto minmax(0,1fr) auto;gap:9px}
+#dw-composer .dw-product-toolbar{grid-row:1;display:flex;align-items:center;gap:10px;flex-wrap:wrap;min-width:0}
+#dw-composer .dw-product-toolbar>.dw-section-head{margin:0 auto 0 0;display:flex;gap:12px}
+#dw-composer .dw-product-toolbar>.dw-add-actions{display:flex;gap:6px}
+#dw-composer .dw-product-toolbar .dw-add{margin:0;width:auto;padding:7px 11px;font-size:12px}
+#dw-composer .dw-product-toolbar>.dw-join{margin:0;width:auto;padding:7px 11px;font-size:11px}
+#dw-composer .dw-product-panel>.dw-items{grid-row:2;order:unset;max-height:none;min-height:0;margin:0;padding-right:8px}
+#dw-composer .dw-product-panel>.dw-product-nav{grid-row:3;order:unset;margin:0;padding-top:8px;max-height:62px;overflow-y:auto;gap:5px}
+#dw-composer .dw-product-nav-button{min-width:32px;padding:5px 9px;font-size:11px}
+#dw-composer .dw-item{padding:11px;margin-bottom:11px}
+#dw-composer .dw-item:not(.dw-set){width:360px;max-width:100%}
+#dw-composer .dw-item-top{margin-bottom:10px;gap:6px}
+#dw-composer .dw-members>.dw-part{flex:0 0 min(310px,100%);width:310px;max-width:100%;padding:0 6px}
+#dw-composer .dw-set .dw-members>.dw-part{flex-basis:min(310px,100%)}
+#dw-composer .dw-set .dw-members::after{flex-basis:max(0px,calc(100% - 310px))}
+#dw-composer .dw-product-fields{gap:9px}
+#dw-composer .dw-product-fields input{padding:7px 8px;font-size:13px;margin-top:4px}
+#dw-composer .dw-option-button{padding:5px 8px;font-size:11px}
+#dw-composer .dw-footer{padding-top:9px;font-size:10px}
+#dw-composer .dw-preview-dialog{padding:0;border:1px solid var(--dw-line);border-radius:10px;background:var(--dw-bg);color:var(--dw-ink);width:min(1050px,96vw);max-height:94dvh}
+#dw-composer .dw-preview-dialog::backdrop{background:#10251cb3}
+#dw-composer .dw-dialog-header{display:flex;align-items:center;justify-content:space-between;padding:12px 16px;border-bottom:1px solid var(--dw-line);background:var(--dw-panel)}
+#dw-composer .dw-dialog-body{padding:16px;overflow:auto;max-height:calc(94dvh - 65px);display:grid;gap:16px}
+#dw-composer .dw-dialog-body>svg{display:block;width:100%;height:auto;background:#fff}
+@media(min-width:1024px) and (min-height:640px){
+ html,body{height:100%;overflow:hidden}
+ #dw-composer{height:100dvh;min-height:0;display:flex;flex-direction:column}
+ #dw-composer .dw-header{flex:0 0 54px}
+ #dw-composer .dw-main{min-height:0;flex:1;display:flex;flex-direction:column;gap:9px}
+ #dw-composer .dw-titlebar{flex:0 0 auto;margin:0}
+ #dw-composer .dw-layout{flex:1;min-height:0;grid-template-rows:minmax(0,1.05fr) minmax(0,1fr);align-items:stretch}
+ #dw-composer .dw-preview-column{grid-column:1;grid-row:1;min-height:0}
+ #dw-composer .dw-paper{flex:1}
+ #dw-composer .dw-basic-column{grid-column:2;grid-row:1;min-height:0;overflow-y:auto}
+ #dw-composer .dw-product-panel{grid-column:1/-1;grid-row:2}
+ #dw-composer .dw-footer{display:none}
+}
+@media(max-width:1023px),(max-height:639px){
+ #dw-composer .dw-paper{max-height:420px}
+ #dw-composer .dw-product-panel>.dw-items{max-height:480px}
+}
+@media(max-width:730px){
+ #dw-composer .dw-layout{grid-template-columns:minmax(0,1fr)}
+ #dw-composer .dw-main{padding:12px}
+ #dw-composer .dw-preview-column{grid-column:1;grid-row:1}
+ #dw-composer .dw-basic-column{grid-column:1;grid-row:2}
+ #dw-composer .dw-product-panel{grid-column:1;grid-row:3}
+ #dw-composer .dw-product-toolbar>.dw-join{width:100%}
+ #dw-composer .dw-header{padding:10px 14px}
+}
+@media(pointer:coarse){#dw-composer input,#dw-composer select{font-size:16px!important}#dw-composer .dw-option-button{min-height:44px}}
+@media print{html,body{height:auto!important;overflow:visible!important}}
+
+/* Three full-height vertical panes on a desktop: preview | basics | products. */
+@media(min-width:1024px){
+ #dw-composer .dw-layout{grid-template-columns:minmax(0,1.4fr) minmax(150px,.4fr) minmax(300px,1.5fr);grid-template-rows:minmax(0,1fr);align-items:stretch}
+ #dw-composer .dw-preview-column{grid-column:1;grid-row:1;min-height:0}
+ #dw-composer .dw-basic-column{grid-column:2;grid-row:1;min-height:0;overflow-y:auto}
+ #dw-composer .dw-basic-column .dw-fields{grid-template-columns:minmax(0,1fr)}
+ #dw-composer .dw-basic-column .dw-wide{grid-column:1}
+ #dw-composer .dw-product-panel{grid-column:3;grid-row:1;min-height:0}
+ #dw-composer .dw-product-toolbar{gap:7px}
+ #dw-composer .dw-product-toolbar>.dw-section-head{flex-basis:100%;justify-content:space-between}
+ #dw-composer .dw-product-toolbar>.dw-add-actions{flex:1;display:grid;grid-template-columns:1fr 1fr}
+ #dw-composer .dw-product-toolbar>.dw-join{flex-basis:100%}
+}
+
+@media(min-width:1024px){#dw-composer .dw-basic-column .dw-segments{flex-direction:column}#dw-composer .dw-basic-column input[type="date"]{font-size:12px;padding-left:5px;padding-right:5px}}
+
+/* Empty editable fields are lightly highlighted; populated fields use the normal surface. */
+#dw-composer input.dw-empty-input{background:#fffbea}
+#dw-composer .dw-option-row{display:flex;flex-wrap:wrap;gap:5px;width:100%}
+#dw-composer .dw-option-row .dw-option-button{padding:6px 7px;font-size:11px}
+
+#dw-composer .dw-product-fields textarea.dw-product-note{display:block;width:100%;padding:7px 8px;margin-top:4px;font-size:13px;line-height:18px;height:34px;min-height:34px;max-height:52px;resize:none;overflow-x:hidden;overflow-y:hidden;white-space:pre-wrap;overflow-wrap:anywhere}
+#dw-composer textarea.dw-empty-input{background:#fffbea}
+@media(pointer:coarse){#dw-composer .dw-product-fields textarea.dw-product-note{font-size:16px;line-height:22px;min-height:38px;max-height:60px}}
+
+#dw-composer .dw-product-panel>.dw-product-nav{max-height:86px}
+#dw-composer .dw-product-nav::before{content:'번호를 끌어 순서 변경 · 세트 구성품은 같은 세트 안에서 이동';flex-basis:100%;font-size:10px;color:var(--dw-sub);line-height:1.4}
+#dw-composer .dw-product-nav-button{cursor:grab;touch-action:none;user-select:none;-webkit-user-select:none}
+#dw-composer .dw-product-nav-button.dw-nav-dragging{opacity:.5;cursor:grabbing}
+#dw-composer .dw-product-nav-button.dw-nav-drop{outline:2px solid var(--dw-green);outline-offset:2px;box-shadow:0 0 0 4px #275c4418}
