@@ -119,7 +119,7 @@ function draw(model,options={}){
   // Empty guide rows are visual space only and never receive document numbers.
   if(layout.pages.length===1)while(y+37<=Math.min(BOTTOM,layout.start+333)){let cx=M;COLS.forEach(w=>{rect(ctx,cx,y,w,37);cx+=w;});y+=37;}
   // Draw group boundaries last so merged No./label cells and thin cell borders cannot cover them.
-  ctx.fillStyle='#65786b';groupSeparators.forEach(boundary=>ctx.fillRect(M,boundary-1,W-2*M,2));
+  ctx.fillStyle='#435b4a';groupSeparators.forEach(boundary=>ctx.fillRect(M,boundary-1.75,W-2*M,3.5));
   font(ctx,9);ctx.fillStyle='#6b7c70';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText((pageIndex+1)+' / '+layout.pages.length,W-M,1084);
   canvas.setAttribute('role','img');canvas.setAttribute('aria-label',model.type+' '+(pageIndex+1)+'페이지. 현장 '+(model.site||'미입력')+'. 제품 '+model.groups.reduce((n,g)=>n+g.rows.length,0)+'개.');
   return canvas;

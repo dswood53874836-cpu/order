@@ -1,0 +1,89 @@
+/* Al Jazeera editorial palette adapted to the order-entry workspace. */
+html,body{background:#ffffff;color:#000000;color-scheme:light}
+#dw-composer{
+ --dw-bg:#ffffff;--dw-panel:#ffffff;--dw-ink:#000000;--dw-sub:#595959;
+ --dw-line:#d8d8d8;--dw-soft:#f0f0f0;--dw-green:#000000;--dw-on:#fff;
+ font-family:Roboto,"Segoe UI","Malgun Gothic",Arial,sans-serif;
+ font-size:14px;line-height:1.5;letter-spacing:-.05px;color-scheme:light;
+}
+#dw-composer .dw-header{background:#ffffff;border-color:#d8d8d8;min-height:56px;padding:10px 20px}
+#dw-composer .dw-logo{background:#000000;color:#fff;border-radius:8px;font-weight:600}
+#dw-composer .dw-name{font-size:16px;font-weight:600;letter-spacing:-.4px}
+#dw-composer .dw-name small{color:#595959;font-size:10px;letter-spacing:1px}
+#dw-composer .dw-header-note{color:#595959;font-size:12px}
+#dw-composer .dw-main{padding:16px 20px}
+#dw-composer h1{font-size:28px;line-height:1.2;font-weight:600;letter-spacing:-.6px;margin-bottom:6px}
+#dw-composer h2{font-size:14px;line-height:1.5;letter-spacing:0;font-weight:600;color:#000000}
+#dw-composer .dw-titlebar p{font-size:12px;color:#595959}
+#dw-composer .dw-panel,#dw-composer .dw-output{background:#ffffff;border:1px solid #d8d8d8;border-radius:12px;box-shadow:none}
+#dw-composer .dw-basic-column,#dw-composer .dw-product-panel{padding:12px}
+#dw-composer .dw-number{color:#595959;font-variant-numeric:tabular-nums}
+#dw-composer .dw-sender-inline,#dw-composer .dw-count{font-size:11px;color:#595959}
+#dw-composer button{background:#ffffff;border-color:#bebebe;border-radius:8px;color:#333333;font-weight:500;transition:background-color .12s,border-color .12s}
+#dw-composer button:hover{background:#f0f0f0;border-color:#595959;color:#000000}
+#dw-composer button:disabled{opacity:.45}
+#dw-composer button:focus-visible,#dw-composer select:focus-visible{outline:2px solid #fa9000;outline-offset:2px}
+#dw-composer .dw-primary,#dw-composer .dw-option-button[aria-pressed=true],#dw-composer .dw-product-nav-button[aria-pressed=true]{background:#000000;border-color:#000000;color:#fff}
+#dw-composer .dw-primary:hover,#dw-composer .dw-option-button[aria-pressed=true]:hover,#dw-composer .dw-product-nav-button[aria-pressed=true]:hover{background:#fa9000;border-color:#fa9000;color:#ffffff;opacity:1}
+#dw-composer .dw-primary:active{background:#a65d00;color:#fff}
+#dw-composer .dw-segments{background:#ffffff;border:1px solid #d8d8d8;border-radius:8px;padding:3px}
+#dw-composer .dw-segments button{background:transparent;border:1px solid transparent;color:#595959}
+#dw-composer .dw-segments button[aria-pressed=true]{background:#f0f0f0;border-color:#bebebe;color:#000000;box-shadow:none}
+#dw-composer label{color:#333333;font-size:12px;font-weight:400}
+#dw-composer input,#dw-composer textarea{background:#ffffff;border:1px solid #bebebe;border-radius:8px;color:#000000;caret-color:#fa9000}
+#dw-composer input::placeholder,#dw-composer textarea::placeholder{color:#595959;opacity:1}
+#dw-composer input:focus,#dw-composer textarea:focus{outline:2px solid #a65d00;outline-offset:1px;border-color:#a65d00}
+/* Keep the user's empty-field cue legible on the dark editing surface. */
+#dw-composer input.dw-empty-input,#dw-composer textarea.dw-empty-input{background:#fffbea;color:#27251c;border-color:#e1d8b6;caret-color:#373c89;color-scheme:light}
+#dw-composer input.dw-empty-input::placeholder,#dw-composer textarea.dw-empty-input::placeholder{color:#746f5c}
+#dw-composer .dw-item{background:#ffffff;border:1px solid #bebebe;border-radius:8px}
+#dw-composer .dw-item-top{padding-bottom:10px;border-bottom:1px solid #d8d8d8;color:#000000}
+#dw-composer .dw-item-top em,#dw-composer .dw-part-title{background:#f0f0f0;color:#333333;border-color:#bebebe}
+#dw-composer .dw-item-top button{color:#595959}
+#dw-composer .dw-item-top button:hover{color:#000000}
+#dw-composer .dw-add,#dw-composer .dw-join{background:#ffffff;border-color:#bebebe;color:#333333}
+#dw-composer .dw-option-row .dw-option-button{background:#f0f0f0;border:1px solid #bebebe;color:#333333;border-radius:6px}
+#dw-composer .dw-option-row .dw-option-button[aria-pressed=true]{background:#000000;border-color:#000000;color:#fff}
+#dw-composer .dw-option-row .dw-option-button[aria-pressed=true]:hover{background:#fa9000;color:#ffffff}
+#dw-composer .dw-product-nav{border-color:#d8d8d8}
+#dw-composer .dw-product-nav-button{font-variant-numeric:tabular-nums;border-radius:6px}
+#dw-composer .dw-product-nav-button.dw-nav-drop{outline-color:#fa9000;box-shadow:0 0 0 4px #fa900026}
+#dw-composer .dw-preview-tools button,#dw-composer .dw-preview-tools select{background:#ffffff;border-color:#bebebe;color:#333333;border-radius:6px;font-size:12px}
+#dw-composer .dw-paper{background:#ffffff;border-color:#d8d8d8;border-radius:12px;padding:12px!important}
+#dw-composer .dw-paper>svg{color-scheme:light;background:#fff;border-color:#bebebe;box-shadow:0 4px 16px #0004}
+#dw-composer .dw-output-buttons button{font-size:12px;min-height:36px}
+#dw-composer .dw-output p{color:#595959;font-size:11px}
+#dw-composer .dw-status{color:#333333;font-size:12px}
+#dw-composer .dw-preview-dialog{background:#ffffff;border-color:#bebebe;border-radius:12px}
+#dw-composer .dw-preview-dialog::backdrop{background:#000b}
+#dw-composer .dw-dialog-header{background:#ffffff;border-color:#d8d8d8}
+#dw-composer .dw-dialog-body{background:#ffffff}
+#dw-composer .dw-dialog-body>svg{color-scheme:light;background:#fff}
+#dw-composer .dw-footer{color:#595959;font-size:11px}
+#dw-composer *{scrollbar-color:#bebebe #ffffff;scrollbar-width:thin}
+@media(max-width:730px){#dw-composer .dw-main{padding:12px}#dw-composer h1{font-size:24px}#dw-composer .dw-header{padding:10px 14px}}
+@media(prefers-reduced-motion:reduce){#dw-composer button{transition:none}}
+@media print{html,body{color-scheme:light;background:#fff!important;color:#000!important}}
+
+/* Orange identifies sections; compact black pills identify actions and selection. */
+#dw-composer .dw-header{border-bottom:2px solid #000}
+#dw-composer .dw-logo{background:#fa9000;color:#000;border-radius:2px;font-weight:700}
+#dw-composer .dw-name{font-weight:700;letter-spacing:0}
+#dw-composer h1{font-size:28px;font-weight:700;letter-spacing:0}
+#dw-composer h2{font-weight:700;letter-spacing:0}
+#dw-composer .dw-section-head h2,#dw-composer .dw-preview-head h2{border-left:4px solid #fa9000;padding-left:8px}
+#dw-composer .dw-panel,#dw-composer .dw-output{border-radius:4px}
+#dw-composer .dw-item{border-radius:4px;border-color:#d8d8d8}
+#dw-composer .dw-item-top{border-bottom:1px solid #d8d8d8;font-weight:700}
+#dw-composer button{border-radius:18px}
+#dw-composer .dw-primary,#dw-composer .dw-option-row .dw-option-button[aria-pressed=true],#dw-composer .dw-product-nav-button[aria-pressed=true]{background:#000;color:#fff;border-color:#000}
+#dw-composer .dw-primary:hover,#dw-composer .dw-option-row .dw-option-button[aria-pressed=true]:hover,#dw-composer .dw-product-nav-button[aria-pressed=true]:hover{background:#333;color:#fff;border-color:#333}
+#dw-composer .dw-segments{background:#f0f0f0;border-radius:18px}
+#dw-composer .dw-segments button[aria-pressed=true]{background:#000;color:#fff;border-color:#000;border-radius:18px;box-shadow:inset 3px 0 #fa9000}
+#dw-composer input,#dw-composer textarea{border-radius:10px;border-color:#bebebe}
+#dw-composer input:focus,#dw-composer textarea:focus{outline-color:#a65d00;border-color:#a65d00}
+#dw-composer .dw-option-row .dw-option-button{border-radius:18px;background:#f0f0f0;color:#333;border-color:#d8d8d8}
+#dw-composer .dw-product-nav-button{border-radius:18px}
+#dw-composer .dw-paper{background:#f0f0f0;border-radius:4px}
+#dw-composer .dw-preview-dialog{border-radius:10px}
+#dw-composer .dw-output p,#dw-composer .dw-footer{color:#595959}
