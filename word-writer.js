@@ -27,7 +27,7 @@ function paragraph(content,{align='left',line=16,after=0,title=false,newPage=fal
  return '<w:p><w:pPr>'+properties+'</w:pPr>'+content+'</w:p>';
 }
 function textBlock(lines,{align='center',size=11,line=Math.max(13,size*1.45),color=INK}={}){
- return paragraph(lines.map(text=>run(text,{size,color})).join('<w:r><w:br/></w:r>'),{align,line});
+ return paragraph(lines.map(text=>run(text,{size,color})).join('<w:r><w:br/></w:r>'),{align,line:Math.max(12,line)});
 }
 function edge(side,size,color){
  return '<w:'+side+' w:val="single" w:sz="'+size+'" w:space="0" w:color="'+color+'"/>';
@@ -90,29 +90,18 @@ function buildPage(model,layout,chunks,pageIndex,ctx,output){
   ],layout.header.tableY-146)
  ]);
  const productRows=[row(columnNames.map((name,index)=>cell(textBlock([name],{size:12}),columns[index],{fill:'F0F4EF'})),30,true)];
- const groupFields=['product','color','size','qty','note'];
  let y=layout.start;
  chunks.forEach((chunk,chunkIndex)=>{
-  chunk.rows.forEach((item,index)=>{
+  chunk.cells.forEach((itemCells,index)=>{
    const merge=chunk.rows.length>1?(index===0?'restart':'continue'):undefined;
    const border=chunkIndex>0&&index===0;
    const cells=[cell(textBlock(index===0?[chunk.number]:['']),columns[0],{merge,border})];
-   groupFields.forEach((key,offset)=>{
+   itemCells.forEach(({lines,size,line},offset)=>{
     const col=columns[offset+1];
-    const value=item[key]??'';
-    let lines,size=11,line;
-    if(key==='note'){
-     ({lines,size}=output.noteLayout(ctx,value,col-12));
-     line=Math.max(13,size*1.5);
-    }else if(key==='product'||key==='size'){
-     lines=[value];size=fit(value,col-12,11);
-    }else{
-     lines=output.wrap(ctx,value,col-12,11);
-    }
     cells.push(cell(textBlock(lines,{size,line}),col,{border}));
    });
-   const label=index===0?output.wrap(ctx,chunk.label,columns[6]-12,11):[''];
-   cells.push(cell(textBlock(label),columns[6],{merge,border}));
+   const {lines,size,line}=chunk.labelText;
+   cells.push(cell(textBlock(index===0?lines:[''],{size,line}),columns[6],{merge,border}));
    productRows.push(row(cells,chunk.heights[index]));
    y+=chunk.heights[index];
   });

@@ -12,6 +12,10 @@
 #dw-composer .dw-preview-column{max-width:none;min-width:0;display:flex;flex-direction:column;gap:8px}
 #dw-composer .dw-preview-column>.dw-preview-head{margin:0;min-height:30px;flex-wrap:wrap;gap:8px}
 #dw-composer .dw-preview-tools{display:flex;align-items:center;flex-wrap:wrap;gap:6px}
+#dw-composer .dw-item-font-tools{display:inline-flex;align-items:center;gap:4px;white-space:nowrap}
+#dw-composer .dw-item-font-tools span{min-width:64px;font-variant-numeric:tabular-nums}
+#dw-composer .dw-item-font-tools button{min-width:28px}
+@media(pointer:coarse){#dw-composer .dw-item-font-tools button{min-width:44px;min-height:44px}}
 #dw-composer .dw-preview-tools select,#dw-composer .dw-preview-tools button{font:inherit;font-size:11px;padding:6px 8px;border:1px solid var(--dw-line);border-radius:6px;background:var(--dw-panel);color:var(--dw-ink)}
 #dw-composer .dw-paper{display:flex;flex-direction:column;align-items:flex-start;min-width:0;min-height:0;padding:8px!important;background:var(--dw-soft);border:1px solid var(--dw-line);border-radius:8px;gap:12px;overflow:auto;overscroll-behavior:contain}
 #dw-composer .dw-paper>svg{display:block;flex-shrink:0;width:100%;height:auto;max-width:none;overflow:hidden;background:#fff;border:1px solid #ced8d0;box-shadow:0 2px 8px #162c2010}

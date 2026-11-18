@@ -6,7 +6,8 @@ const COLS=[40,105,64,113,56,220,106];
 const META_COLS=[146,160,226,172];
 const COLUMN_NAMES=['No.','제품','색상','사이즈','수량','비고','라벨'];
 const META_FIELDS=[['발주일','date'],['현장명','site'],['담당자','person'],['납기일','delivery']];
-const KEYS=['product','color','size','qty','note','label'];
+const ITEM_FIELDS=['product','color','size','qty','note'];
+const ITEM_FONT={min:8,defaultSize:11,max:17};
 const FONT='"Malgun Gothic", "Apple SD Gothic Neo", sans-serif';
 function font(ctx,size,weight=400){ctx.font=weight+' '+size+'px '+FONT;}
 function textWidth(ctx,text,size){font(ctx,size);return ctx.measureText(String(text)).width;}
@@ -18,16 +19,25 @@ function wrap(ctx,text,width,size=11){
  }
  return result;
 }
-function noteLayout(ctx,note,width){
+function noteLayout(ctx,note,width,baseSize=ITEM_FONT.defaultSize){
  const chunks=String(note||'').match(/[^,]*,|[^,]+$/g)||[''];
- let size=11;for(const chunk of chunks)size=Math.min(size,fitSize(ctx,chunk.trim(),width,11));
+ let size=baseSize;for(const chunk of chunks)size=Math.min(size,fitSize(ctx,chunk.trim(),width,baseSize));
  const lines=[];let line='';
  for(const raw of chunks){const chunk=raw.trim();const candidate=line?line+' '+chunk:chunk;if(line&&textWidth(ctx,candidate,size)>width){lines.push(line);line=chunk;}else line=candidate;}
  lines.push(line);return {size,lines};
 }
-function rowHeight(ctx,row){
- const note=noteLayout(ctx,row.note,COLS[5]-12);
- return Math.max(37,note.lines.length*Math.max(13,note.size*1.5)+14,wrap(ctx,row.color,COLS[2]-10).length*15+14,wrap(ctx,row.qty,COLS[4]-10).length*15+14);
+function itemText(ctx,key,value,width,baseSize){
+ const available=width-12;
+ if(key==='note'){
+  const {lines,size}=noteLayout(ctx,value,available,baseSize);
+  return {lines,size,line:Math.max(13,size*1.5)};
+ }
+ if(key==='product'||key==='size'){
+  const text=String(value??'');
+  const size=fitSize(ctx,text,available-2,baseSize);
+  return {lines:[text],size,line:size*1.45};
+ }
+ return {lines:wrap(ctx,value,available,baseSize),size:baseSize,line:baseSize*1.45};
 }
 function getHeader(ctx,model){
  const general=wrap(ctx,model.note,W-2*M-52,10);
@@ -35,24 +45,29 @@ function getHeader(ctx,model){
 }
 function paginate(ctx,model){
  const header=getHeader(ctx,model);const start=header.tableY+30;
+ const itemFontSize=Number.isFinite(model.itemFontSize)
+  ?Math.min(ITEM_FONT.max,Math.max(ITEM_FONT.min,model.itemFontSize))
+  :ITEM_FONT.defaultSize;
  const usable=BOTTOM-start;const pages=[[]];let used=0;
  for(let groupIndex=0;groupIndex<model.groups.length;groupIndex++){
   const group=model.groups[groupIndex];
-  const heights=group.rows.map(row=>rowHeight(ctx,row));
+  const rowCells=group.rows.map(row=>ITEM_FIELDS.map((key,index)=>itemText(ctx,key,row[key],COLS[index+1],itemFontSize)));
+  const heights=rowCells.map(cells=>Math.max(37,...cells.map(cell=>cell.lines.length*cell.line+14)));
   const label=String(group.rows[0]?.label||'');
-  const labelHeight=wrap(ctx,label,COLS[6]-12).length*15+14;
+  const labelText=itemText(ctx,'label',label,COLS[6],itemFontSize);
+  const labelHeight=labelText.lines.length*labelText.line+14;
   const total=heights.reduce((a,b)=>a+b,0);
   if(total<labelHeight)heights[heights.length-1]+=labelHeight-total;
   const groupHeight=heights.reduce((a,b)=>a+b,0);
   if(groupHeight<=usable&&used+groupHeight>usable&&used){pages.push([]);used=0;}
   let rowIndex=0;
   while(rowIndex<group.rows.length){
-   const chunk={number:groupIndex+1,rows:[],heights:[],label};
+   const chunk={number:groupIndex+1,rows:[],cells:[],heights:[],label,labelText};
    while(rowIndex<group.rows.length){
     const height=heights[rowIndex];
     if(height>usable)throw new Error('제품 '+(groupIndex+1)+'번의 비고가 한 페이지보다 깁니다. 내용을 나누어 입력해 주세요.');
     if(used+height>usable){if(chunk.rows.length)break;pages.push([]);used=0;}
-    chunk.rows.push(group.rows[rowIndex]);chunk.heights.push(height);used+=height;rowIndex++;
+    chunk.rows.push(group.rows[rowIndex]);chunk.cells.push(rowCells[rowIndex]);chunk.heights.push(height);used+=height;rowIndex++;
     if(used>=usable)break;
    }
    if(chunk.rows.length)pages[pages.length-1].push(chunk);
@@ -62,11 +77,14 @@ function paginate(ctx,model){
  return {pages,header,start,usable};
 }
 function center(ctx,text,x,y,w,h,size=11,nowrap=false){
- text=String(text||'');ctx.fillStyle='#24382d';
+ text=String(text||'');
  const actual=nowrap?fitSize(ctx,text,w-12,size):size;
  const lines=nowrap?[text]:wrap(ctx,text,w-12,actual);
- font(ctx,actual);ctx.textAlign='center';ctx.textBaseline='middle';
- const lh=actual*1.45;lines.forEach((line,i)=>ctx.fillText(line,x+w/2,y+h/2+(i-(lines.length-1)/2)*lh));
+ drawCellText(ctx,{lines,size:actual,line:actual*1.45},x,y,w,h);
+}
+function drawCellText(ctx,{lines,size,line},x,y,w,h){
+ font(ctx,size);ctx.fillStyle='#24382d';ctx.textAlign='center';ctx.textBaseline='middle';
+ lines.forEach((text,i)=>ctx.fillText(text,x+w/2,y+h/2+(i-(lines.length-1)/2)*line));
 }
 function rect(ctx,x,y,w,h,fill){if(fill){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);}ctx.strokeStyle='#a9b8ac';ctx.lineWidth=.65;ctx.strokeRect(x,y,w,h);}
 function headerCell(ctx,label,value,x,y,w){
@@ -110,12 +128,11 @@ function draw(model,options={}){
    if(chunkIndex>0)groupSeparators.push(y);
    const total=chunk.heights.reduce((a,b)=>a+b,0);
    rect(ctx,M,y,COLS[0],total);center(ctx,chunk.number,M,y,COLS[0],total,11,true);
-   rect(ctx,W-M-COLS[6],y,COLS[6],total);center(ctx,chunk.label,W-M-COLS[6],y,COLS[6],total);
-   chunk.rows.forEach((row,rowIndex)=>{
+   rect(ctx,W-M-COLS[6],y,COLS[6],total);drawCellText(ctx,chunk.labelText,W-M-COLS[6],y,COLS[6],total);
+   chunk.cells.forEach((cells,rowIndex)=>{
     let cellX=M+COLS[0];const height=chunk.heights[rowIndex];
-    KEYS.slice(0,5).forEach((key,i)=>{const width=COLS[i+1];rect(ctx,cellX,y,width,height);
-     if(key==='note'){const n=noteLayout(ctx,row.note,width-12);const lineHeight=Math.max(13,n.size*1.5);font(ctx,n.size);ctx.fillStyle='#24382d';ctx.textAlign='center';ctx.textBaseline='middle';n.lines.forEach((line,lineIndex)=>ctx.fillText(line,cellX+width/2,y+height/2+(lineIndex-(n.lines.length-1)/2)*lineHeight));}
-     else center(ctx,row[key],cellX,y,width,height,11,key==='product'||key==='size');cellX+=width;
+    cells.forEach((cell,i)=>{const width=COLS[i+1];rect(ctx,cellX,y,width,height);
+     drawCellText(ctx,cell,cellX,y,width,height);cellX+=width;
     });y+=height;
    });
   });
@@ -181,6 +198,6 @@ async function print(pages,model){
  const cleanup=()=>{surface.remove();document.title=oldTitle;};window.addEventListener('afterprint',cleanup,{once:true});
  window.print();
 }
-global.OrderOutput={draw,saveJpg,copyImage,print,filename,download,zip,paginate,noteLayout,fitSize,wrap,
+global.OrderOutput={draw,saveJpg,copyImage,print,filename,download,zip,paginate,noteLayout,fitSize,wrap,itemFont:ITEM_FONT,
  geometry:{width:W,margin:M,bottom:BOTTOM,columns:COLS,metaColumns:META_COLS,columnNames:COLUMN_NAMES,metaFields:META_FIELDS}};
 })(globalThis);

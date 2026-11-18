@@ -30,11 +30,35 @@ const selected=new Set();
 const showStatus=message=>status.textContent=message;
 const rerender=()=>{items();preview()};
 let outputPages=[];
+const itemFont=OrderOutput.itemFont;
+let itemFontSize=itemFont.defaultSize;
 const previewTools=document.createElement('div');previewTools.className='dw-preview-tools';
 const zoomSelect=document.createElement('select');zoomSelect.setAttribute('aria-label','미리보기 확대 비율');
 for(const [value,text] of [['fit','내용 맞춤'],['100','100%'],['125','125%'],['150','150%']]){const option=document.createElement('option');option.value=value;option.textContent=text;zoomSelect.append(option);}zoomSelect.value='fit';
 const expandButton=document.createElement('button');expandButton.type='button';expandButton.className='cursor-interaction';expandButton.textContent='크게 보기';
-previewTools.append(zoomSelect,expandButton);previewPanel.querySelector('.dw-preview-head').append(previewTools);
+const fontTools=document.createElement('div');
+fontTools.className='dw-item-font-tools';
+fontTools.setAttribute('role','group');
+fontTools.setAttribute('aria-label','품목 글자 크기');
+const fontValue=document.createElement('span');
+fontValue.setAttribute('aria-live','polite');
+const fontMinus=button('−',()=>changeItemFont(-1));
+fontMinus.setAttribute('aria-label','품목 글자 크기 줄이기');
+const fontPlus=button('+',()=>changeItemFont(1));
+fontPlus.setAttribute('aria-label','품목 글자 크기 키우기');
+function updateItemFontControls(){
+ fontValue.textContent='품목 글자 '+itemFontSize;
+ fontMinus.disabled=itemFontSize<=itemFont.min;
+ fontPlus.disabled=itemFontSize>=itemFont.max;
+}
+function changeItemFont(step){
+ itemFontSize=Math.min(itemFont.max,Math.max(itemFont.min,itemFontSize+step));
+ updateItemFontControls();
+ preview();
+}
+updateItemFontControls();
+fontTools.append(fontValue,fontMinus,fontPlus);
+previewTools.append(zoomSelect,expandButton,fontTools);previewPanel.querySelector('.dw-preview-head').append(previewTools);
 function applyPreviewZoom(){root.querySelectorAll('.dw-paper>svg').forEach(page=>page.style.width=zoomSelect.value==='fit'?'100%':(794*Number(zoomSelect.value)/100)+'px');}
 zoomSelect.addEventListener('change',applyPreviewZoom);
 const previewDialog=document.createElement('dialog');previewDialog.className='dw-preview-dialog';previewDialog.setAttribute('aria-label','발주서 크게 보기');
@@ -44,7 +68,7 @@ const dialogClose=document.createElement('button');dialogClose.type='button';dia
 const dialogBody=document.createElement('div');dialogBody.className='dw-dialog-body';dialogHead.append(dialogTitle,dialogClose);previewDialog.append(dialogHead,dialogBody);root.append(previewDialog);
 expandButton.onclick=()=>{dialogBody.replaceChildren(...OrderOutput.draw(getModel(),{vector:true}));previewDialog.showModal();};
 
-function getModel(){const fields={};root.querySelectorAll('[data-field]').forEach(input=>fields[input.dataset.field]=input.value);return {...fields,type:state.type,groups:state.groups};}
+function getModel(){const fields={};root.querySelectorAll('[data-field]').forEach(input=>fields[input.dataset.field]=input.value);return {...fields,type:state.type,groups:state.groups,itemFontSize};}
 function fitOptions(){
 root.querySelectorAll('.dw-product-note').forEach(input=>{
  const style=getComputedStyle(input);const line=parseFloat(style.lineHeight)||18;
