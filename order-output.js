@@ -3,6 +3,9 @@
 'use strict';
 const W=794,H=1123,M=45,BOTTOM=1065;
 const COLS=[40,105,64,113,56,220,106];
+const META_COLS=[146,160,226,172];
+const COLUMN_NAMES=['No.','제품','색상','사이즈','수량','비고','라벨'];
+const META_FIELDS=[['발주일','date'],['현장명','site'],['담당자','person'],['납기일','delivery']];
 const KEYS=['product','color','size','qty','note','label'];
 const FONT='"Malgun Gothic", "Apple SD Gothic Neo", sans-serif';
 function font(ctx,size,weight=400){ctx.font=weight+' '+size+'px '+FONT;}
@@ -94,13 +97,13 @@ function draw(model,options={}){
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#24382d';ctx.textAlign='left';ctx.textBaseline='top';font(ctx,15,600);ctx.fillText(model.type,M,32);
   font(ctx,13);ctx.fillText('수신처',M,59);const recipientX=M+ctx.measureText('수신처  ').width;font(ctx,11);ctx.fillText(model.recipient||'—',recipientX,59);font(ctx,13);ctx.textAlign='right';ctx.fillText('발신처  안양 대산우드',W-M,59);
-  const widths=[146,160,226,172];let x=M;
-  const fields=[['발주일',model.date],['현장명',model.site],['담당자',model.person],['납기일',model.delivery]];
+  const widths=META_COLS;let x=M;
+  const fields=META_FIELDS.map(([label,key])=>[label,model[key]]);
   fields.forEach(([label,value],i)=>{rect(ctx,x,82,widths[i],63);headerCell(ctx,label,value,x,82,widths[i]);if(i===2){font(ctx,fitSize(ctx,model.phone,widths[i]-14,10));ctx.fillStyle='#54685a';ctx.textAlign='left';ctx.fillText(model.phone||'—',x+7,126);}x+=widths[i];});
   const generalHeight=layout.header.tableY-145;
   rect(ctx,M,145,W-2*M,generalHeight);font(ctx,11);ctx.textAlign='left';ctx.fillStyle='#67776b';ctx.fillText('비고',M+7,153);
   font(ctx,10);ctx.fillStyle='#24382d';layout.header.general.forEach((line,i)=>ctx.fillText(line,M+43,153+i*15));
-  x=M;const names=['No.','제품','색상','사이즈','수량','비고','라벨'];
+  x=M;const names=COLUMN_NAMES;
   COLS.forEach((w,i)=>{rect(ctx,x,layout.header.tableY,w,30,'#f0f4ef');center(ctx,names[i],x,layout.header.tableY,w,30,12);x+=w;});
   let y=layout.start;const groupSeparators=[];
   chunks.forEach((chunk,chunkIndex)=>{
@@ -178,5 +181,6 @@ async function print(pages,model){
  const cleanup=()=>{surface.remove();document.title=oldTitle;};window.addEventListener('afterprint',cleanup,{once:true});
  window.print();
 }
-global.OrderOutput={draw,saveJpg,copyImage,print,filename,download,zip,paginate,noteLayout,fitSize};
+global.OrderOutput={draw,saveJpg,copyImage,print,filename,download,zip,paginate,noteLayout,fitSize,wrap,
+ geometry:{width:W,margin:M,bottom:BOTTOM,columns:COLS,metaColumns:META_COLS,columnNames:COLUMN_NAMES,metaFields:META_FIELDS}};
 })(globalThis);

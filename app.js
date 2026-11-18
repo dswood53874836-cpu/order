@@ -16,8 +16,8 @@ const todayInKorea=()=>{const parts=new Intl.DateTimeFormat('en-US',{timeZone:'A
 root.querySelector('[data-field="date"]').value=todayInKorea();
 const blank=(product='')=>({product,color:'',size:'',qty:'',note:'',label:''});
 const state={type:'발주서',mobile:false,spacing:22,groups:[
-{rows:[{product:'YA-07E',color:'197',size:'900×2100',qty:'1개',note:'양면엣지, 상부 1142 실타',label:'입구'},{product:'YA-07E',color:'197',size:'833×2049',qty:'1개',note:'양면엣지, 상부 1146 실타',label:'입구'}]},
-{rows:[{product:'YA-07E',color:'197',size:'835×2048',qty:'1개',note:'양면엣지, 상부 1146 실타',label:'후면'}]}
+{rows:[{product:'YA-07E',color:'197',size:'900*2100',qty:'1개',note:'양면엣지, 상부 1142 실타',label:'입구'},{product:'YA-07E',color:'197',size:'833*2049',qty:'1개',note:'양면엣지, 상부 1146 실타',label:'입구'}]},
+{rows:[{product:'YA-07E',color:'197',size:'835*2048',qty:'1개',note:'양면엣지, 상부 1146 실타',label:'후면'}]}
 ]};
 const frequentOptions=['식무','식기유','가스켓','완조립','비조립','양면엣지','하부 950 실타','행거홈','좌우다대 심재보강','MDF 프레임몰딩(돌출: )','PVC 프레임몰딩(돌출: )','밀때 좌손','밀때 우손','당길때 좌손','당길때 우손'];
 const sampleGroups=JSON.parse(JSON.stringify(state.groups));state.groups=[{rows:[blank()]}];
@@ -212,7 +212,32 @@ group.rows.forEach((row,rowIndex)=>{
 const part=document.createElement('div');part.className='dw-part';
 
 const grid=document.createElement('div');grid.className='dw-product-fields';
-['product','color','qty','size','label','note'].forEach(key=>{const label=document.createElement('label');label.textContent=labels[key];if(key==='size')label.className='dw-span2';if(key==='note')label.className='dw-wide';if(key==='label'&&isSet&&rowIndex>0)return;const input=document.createElement(key==='note'?'textarea':'input');if(key==='note'){input.className='dw-product-note';input.rows=1;input.setAttribute('rows','1');}input.value=row[key];input.setAttribute('aria-label',(index+1)+'번 '+(isSet?(rowIndex+1)+'번째 제품 ':'')+labels[key]);input.placeholder=key==='qty'?'예: 1개, 2박스':key==='size'?'예: 833×2049':labels[key]+' 입력';input.oninput=()=>{row[key]=input.value;if(key==='label')group.rows.forEach(r=>r.label=input.value);preview()};label.append(input);grid.append(label);
+['product','color','qty','size','label','note'].forEach(key=>{
+const label=document.createElement('label');
+label.textContent=labels[key];
+if(key==='size')label.className='dw-span2';
+if(key==='note')label.className='dw-wide';
+if(key==='label'&&isSet&&rowIndex>0)return;
+const input=document.createElement(key==='note'?'textarea':'input');
+if(key==='note'){input.className='dw-product-note';input.rows=1;input.setAttribute('rows','1');}
+input.value=row[key];
+input.setAttribute('aria-label',(index+1)+'번 '+(isSet?(rowIndex+1)+'번째 제품 ':'')+labels[key]);
+input.placeholder=key==='qty'?'예: 1개, 2박스':key==='size'?'예: 833*2049':labels[key]+' 입력';
+input.oninput=()=>{
+ if(key==='size'){
+  const size=input.value.replace(/(\d[ \t]*)[xX×](?=[ \t]*(?:\d|$))/g,'$1*');
+  if(size!==input.value){
+   const {selectionStart,selectionEnd,selectionDirection}=input;
+   input.value=size;
+   if(selectionStart!=null&&selectionEnd!=null)input.setSelectionRange(selectionStart,selectionEnd,selectionDirection);
+  }
+ }
+ row[key]=input.value;
+ if(key==='label')group.rows.forEach(r=>r.label=input.value);
+ preview();
+};
+label.append(input);
+grid.append(label);
 if(key==='note'){
 const options=document.createElement('div');options.className='dw-quick-options dw-wide';options.setAttribute('role','group');options.setAttribute('aria-label',(index+1)+'번 '+(rowIndex+1)+'번째 제품 자주 쓰는 비고 옵션');
 const optionButtons=[];
