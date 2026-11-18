@@ -6,6 +6,9 @@ const COLS=[40,105,64,113,56,220,106];
 const META_COLS=[146,160,226,172];
 const COLUMN_NAMES=['No.','제품','색상','사이즈','수량','비고','라벨'];
 const META_FIELDS=[['발주일','date'],['현장명','site'],['담당자','person'],['납기일','delivery']];
+// The A4 drawing uses 96 logical pixels per inch; document fonts are specified in points.
+const HEADER={title:11*96/72,label:10*96/72,value:11*96/72,
+ metaY:82,metaHeight:49,noteLabelWidth:43,notePadding:5,noteLine:18};
 const ITEM_FIELDS=['product','color','size','qty','note'];
 const ITEM_FONT={min:8,defaultSize:11,max:17};
 const FONT='"Malgun Gothic", "Apple SD Gothic Neo", sans-serif';
@@ -40,8 +43,15 @@ function itemText(ctx,key,value,width,baseSize){
  return {lines:wrap(ctx,value,available,baseSize),size:baseSize,line:baseSize*1.45};
 }
 function getHeader(ctx,model){
- const general=wrap(ctx,model.note,W-2*M-52,10);
- return {general,tableY:178+Math.max(1,general.length)*15};
+ const contact=[model.person,model.phone].map(value=>String(value||'').trim()).filter(Boolean).join(' ');
+ const fields=META_FIELDS.map(([label,key],i)=>{
+  const value=(key==='person'?contact:model[key])||'—';
+  return {label,value,size:fitSize(ctx,value,META_COLS[i]-16,HEADER.value)};
+ });
+ const general=wrap(ctx,model.note,W-2*M-HEADER.noteLabelWidth-14,HEADER.label);
+ const noteY=HEADER.metaY+HEADER.metaHeight;
+ const noteHeight=2*HEADER.notePadding+general.length*HEADER.noteLine;
+ return {fields,general,noteY,noteHeight,tableY:noteY+noteHeight};
 }
 function paginate(ctx,model){
  const header=getHeader(ctx,model);const start=header.tableY+30;
@@ -87,9 +97,9 @@ function drawCellText(ctx,{lines,size,line},x,y,w,h){
  lines.forEach((text,i)=>ctx.fillText(text,x+w/2,y+h/2+(i-(lines.length-1)/2)*line));
 }
 function rect(ctx,x,y,w,h,fill){if(fill){ctx.fillStyle=fill;ctx.fillRect(x,y,w,h);}ctx.strokeStyle='#a9b8ac';ctx.lineWidth=.65;ctx.strokeRect(x,y,w,h);}
-function headerCell(ctx,label,value,x,y,w){
- font(ctx,11);ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle='#67776b';ctx.fillText(label,x+7,y+6);
- font(ctx,fitSize(ctx,value,w-14,11));ctx.fillStyle='#24382d';ctx.fillText(String(value||'—'),x+7,y+23);
+function headerCell(ctx,{label,value,size},x,y){
+ font(ctx,HEADER.label);ctx.textAlign='left';ctx.textBaseline='top';ctx.fillStyle='#67776b';ctx.fillText(label,x+7,y+4);
+ font(ctx,size);ctx.fillStyle='#24382d';ctx.fillText(value,x+7,y+25);
 }
 function svgContext(svg,measurement){
  const NS='http://www.w3.org/2000/svg';
@@ -113,14 +123,20 @@ function draw(model,options={}){
    ctx=svgContext(canvas,measurement);
   }else{canvas=document.createElement('canvas');canvas.width=W*3;canvas.height=H*3;ctx=canvas.getContext('2d');ctx.scale(3,3);}
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
-  ctx.fillStyle='#24382d';ctx.textAlign='left';ctx.textBaseline='top';font(ctx,15,600);ctx.fillText(model.type,M,32);
-  font(ctx,13);ctx.fillText('수신처',M,59);const recipientX=M+ctx.measureText('수신처  ').width;font(ctx,11);ctx.fillText(model.recipient||'—',recipientX,59);font(ctx,13);ctx.textAlign='right';ctx.fillText('발신처  안양 대산우드',W-M,59);
-  const widths=META_COLS;let x=M;
-  const fields=META_FIELDS.map(([label,key])=>[label,model[key]]);
-  fields.forEach(([label,value],i)=>{rect(ctx,x,82,widths[i],63);headerCell(ctx,label,value,x,82,widths[i]);if(i===2){font(ctx,fitSize(ctx,model.phone,widths[i]-14,10));ctx.fillStyle='#54685a';ctx.textAlign='left';ctx.fillText(model.phone||'—',x+7,126);}x+=widths[i];});
-  const generalHeight=layout.header.tableY-145;
-  rect(ctx,M,145,W-2*M,generalHeight);font(ctx,11);ctx.textAlign='left';ctx.fillStyle='#67776b';ctx.fillText('비고',M+7,153);
-  font(ctx,10);ctx.fillStyle='#24382d';layout.header.general.forEach((line,i)=>ctx.fillText(line,M+43,153+i*15));
+  ctx.fillStyle='#24382d';ctx.textAlign='left';ctx.textBaseline='top';font(ctx,HEADER.title,600);ctx.fillText(model.type,M,32);
+  font(ctx,HEADER.label);ctx.fillText('수신처',M,59);
+  const recipientX=M+ctx.measureText('수신처  ').width;
+  const recipient=model.recipient||'—';
+  font(ctx,fitSize(ctx,recipient,(W-2*M)*.65-(recipientX-M)-2,HEADER.label));ctx.fillText(recipient,recipientX,59);
+  font(ctx,HEADER.label);ctx.textAlign='right';ctx.fillText('발신처  안양 대산우드',W-M,59);
+  let x=M;
+  const {fields,noteY,noteHeight,general}=layout.header;
+  fields.forEach((field,i)=>{rect(ctx,x,HEADER.metaY,META_COLS[i],HEADER.metaHeight);headerCell(ctx,field,x,HEADER.metaY);x+=META_COLS[i];});
+  const noteX=M+HEADER.noteLabelWidth;
+  rect(ctx,M,noteY,HEADER.noteLabelWidth,noteHeight);
+  rect(ctx,noteX,noteY,W-M-noteX,noteHeight);
+  font(ctx,HEADER.label);ctx.textAlign='left';ctx.fillStyle='#67776b';ctx.fillText('비고',M+7,noteY+HEADER.notePadding);
+  ctx.fillStyle='#24382d';general.forEach((line,i)=>ctx.fillText(line,noteX+7,noteY+HEADER.notePadding+i*HEADER.noteLine));
   x=M;const names=COLUMN_NAMES;
   COLS.forEach((w,i)=>{rect(ctx,x,layout.header.tableY,w,30,'#f0f4ef');center(ctx,names[i],x,layout.header.tableY,w,30,12);x+=w;});
   let y=layout.start;const groupSeparators=[];
@@ -199,5 +215,5 @@ async function print(pages,model){
  window.print();
 }
 global.OrderOutput={draw,saveJpg,copyImage,print,filename,download,zip,paginate,noteLayout,fitSize,wrap,itemFont:ITEM_FONT,
- geometry:{width:W,margin:M,bottom:BOTTOM,columns:COLS,metaColumns:META_COLS,columnNames:COLUMN_NAMES,metaFields:META_FIELDS}};
+ geometry:{width:W,margin:M,bottom:BOTTOM,columns:COLS,metaColumns:META_COLS,columnNames:COLUMN_NAMES,metaFields:META_FIELDS,header:HEADER}};
 })(globalThis);

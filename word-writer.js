@@ -58,36 +58,34 @@ function table(widths,rows,{bordered=true,padding={left:6}}={}){
 }
 
 function buildPage(model,layout,chunks,pageIndex,ctx,output){
- const {columns,metaColumns,columnNames,metaFields,width,margin,bottom}=output.geometry;
+ const {columns,metaColumns,columnNames,header,width,margin,bottom}=output.geometry;
  const contentWidth=width-2*margin;
  const fit=(text,max,base)=>output.fitSize(ctx,text,max-2,base);
  const display=value=>value||'—';
- const title=paragraph(run(model.type,{size:15,color:'000000',bold:true}),{line:20,after:7,title:true,newPage:pageIndex>0});
+ const title=paragraph(run(model.type,{size:header.title,color:'000000',bold:true}),{line:20,after:7,title:true,newPage:pageIndex>0});
  const partyWidths=[contentWidth*.65,contentWidth*.35];
  const recipient=display(model.recipient);
- const recipientSize=fit(recipient,partyWidths[0]-54,11);
+ const recipientSize=fit(recipient,partyWidths[0]-54,header.label);
  const parties=table(partyWidths,[row([
-  cell(paragraph(run('수신처  ',{size:13})+run(recipient,{size:recipientSize}),{line:18}),partyWidths[0]),
-  cell(textBlock(['발신처  안양 대산우드'],{align:'right',size:13,line:18}),partyWidths[1])
+  cell(paragraph(run('수신처  ',{size:header.label})+run(recipient,{size:recipientSize}),{line:18}),partyWidths[0]),
+  cell(textBlock(['발신처  안양 대산우드'],{align:'right',size:header.label,line:18}),partyWidths[1])
  ],22)],{bordered:false,padding:{}});
- const infoCells=metaFields.map(([label,key],index)=>{
-  const col=metaColumns[index], value=display(model[key]);
-  let content=textBlock([label],{align:'left',size:11,line:17,color:MUTED})
-   +textBlock([value],{align:'left',size:fit(value,col-14,11),line:19});
-  if(key==='person'){
-   const phone=display(model.phone);
-   content+=textBlock([phone],{align:'left',size:fit(phone,col-14,10),line:15,color:'54685A'});
-  }
-  return cell(content,col,{span:index===0?2:1,padding:{top:5,left:7},vertical:'top'});
+ const infoCells=layout.header.fields.map(({label,value,size},index)=>{
+  const content=textBlock([label],{align:'left',size:header.label,line:21,color:MUTED})
+   +textBlock([value],{align:'left',size,line:20});
+  return cell(content,metaColumns[index],{span:index===0?2:1,padding:{top:4,left:7},vertical:'top'});
  });
- const noteGrid=[43,metaColumns[0]-43,...metaColumns.slice(1)];
+ const noteWidth=header.noteLabelWidth;
+ const noteGrid=[noteWidth,metaColumns[0]-noteWidth,...metaColumns.slice(1)];
+ const noteText={align:'left',line:header.noteLine,size:header.label};
+ const notePadding={top:header.notePadding,left:7};
  const meta=table(noteGrid,[
-  row(infoCells,63),
+  row(infoCells,header.metaHeight),
   row([
-   cell(textBlock(['비고'],{align:'left',line:15,color:MUTED}),43,{padding:{top:7,left:7},vertical:'top'}),
-   cell(textBlock(layout.header.general,{align:'left',line:15,size:10}),contentWidth-43,
-    {span:4,padding:{top:7,left:0,right:9},vertical:'top'})
-  ],layout.header.tableY-146)
+   cell(textBlock(['비고'],{...noteText,color:MUTED}),noteWidth,{padding:notePadding,vertical:'top'}),
+   cell(textBlock(layout.header.general,noteText),contentWidth-noteWidth,
+    {span:4,padding:notePadding,vertical:'top'})
+  ],layout.header.noteHeight)
  ]);
  const productRows=[row(columnNames.map((name,index)=>cell(textBlock([name],{size:12}),columns[index],{fill:'F0F4EF'})),30,true)];
  let y=layout.start;
