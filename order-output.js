@@ -115,13 +115,17 @@ function draw(model,options={}){
  const layout=paginate(measurement,model);
  return layout.pages.map((chunks,pageIndex)=>{
   let canvas,ctx;
+  const contentBottom=layout.start+chunks.reduce((sum,chunk)=>sum+chunk.heights.reduce((a,b)=>a+b,0),0);
   if(options.vector){
    canvas=document.createElementNS('http://www.w3.org/2000/svg','svg');
-   const contentHeight=layout.start+chunks.reduce((total,chunk)=>total+chunk.heights.reduce((a,b)=>a+b,0),0)+24;
+   const contentHeight=contentBottom+24;
    const visibleHeight=options.crop?Math.min(H,contentHeight):H;
    canvas.setAttribute('viewBox','0 0 '+W+' '+visibleHeight);canvas.setAttribute('width',W);canvas.setAttribute('height',visibleHeight);canvas.setAttribute('xmlns','http://www.w3.org/2000/svg');
    ctx=svgContext(canvas,measurement);
-  }else{canvas=document.createElement('canvas');canvas.width=W*3;canvas.height=H*3;ctx=canvas.getContext('2d');ctx.scale(3,3);}
+  }else{canvas=document.createElement('canvas');const inset=options.clipboard?27:0;
+   canvas.width=(W-2*inset)*3;canvas.height=options.clipboard?Math.ceil((contentBottom+10)*3):H*3;
+   ctx=canvas.getContext('2d');ctx.scale(3,3);
+   if(options.clipboard)ctx.translate(-inset,-16);}
   ctx.fillStyle='#fff';ctx.fillRect(0,0,W,H);
   ctx.fillStyle='#24382d';ctx.textAlign='left';ctx.textBaseline='top';font(ctx,HEADER.title,600);ctx.fillText(model.type,M,32);
   font(ctx,HEADER.label);ctx.fillText('수신처',M,59);
@@ -153,10 +157,10 @@ function draw(model,options={}){
    });
   });
   // Empty guide rows are visual space only and never receive document numbers.
-  if(layout.pages.length===1)while(y+37<=Math.min(BOTTOM,layout.start+333)){let cx=M;COLS.forEach(w=>{rect(ctx,cx,y,w,37);cx+=w;});y+=37;}
+  if(!options.clipboard&&layout.pages.length===1)while(y+37<=Math.min(BOTTOM,layout.start+333)){let cx=M;COLS.forEach(w=>{rect(ctx,cx,y,w,37);cx+=w;});y+=37;}
   // Draw group boundaries last so merged No./label cells and thin cell borders cannot cover them.
   ctx.fillStyle='#435b4a';groupSeparators.forEach(boundary=>ctx.fillRect(M,boundary-1.75,W-2*M,3.5));
-  font(ctx,9);ctx.fillStyle='#6b7c70';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText((pageIndex+1)+' / '+layout.pages.length,W-M,1084);
+  if(!options.clipboard){font(ctx,9);ctx.fillStyle='#6b7c70';ctx.textAlign='right';ctx.textBaseline='top';ctx.fillText((pageIndex+1)+' / '+layout.pages.length,W-M,1084);}
   canvas.setAttribute('role','img');canvas.setAttribute('aria-label',model.type+' '+(pageIndex+1)+'페이지. 현장 '+(model.site||'미입력')+'. 제품 '+model.groups.reduce((n,g)=>n+g.rows.length,0)+'개.');
   return canvas;
  });
@@ -190,7 +194,7 @@ function copyImage(model){
  const snapshot=JSON.parse(JSON.stringify(model));let pageCount=1,reduced=false;
  // Start clipboard.write inside the click gesture; create the PNG asynchronously.
  const imagePromise=Promise.resolve(document.fonts?.ready).then(async()=>{
-  const pages=draw(snapshot);pageCount=pages.length;
+  const pages=draw(snapshot,{clipboard:true});pageCount=pages.length;
   if(pageCount===1)return png(pages[0]);
   const width=Math.max(...pages.map(page=>page.width));
   const height=pages.reduce((total,page)=>total+page.height,0);
